@@ -583,89 +583,110 @@
         const c = cvs.getContext('2d');
 
         const palettes = [
-            ['#0f0c29', '#302b63', '#24243e'],
-            ['#1a002e', '#3a1b5e', '#6c3fa0'],
-            ['#0a1628', '#1a3a5c', '#2d6a9f'],
-            ['#2e0a0a', '#5c1a1a', '#9f3d2d'],
-            ['#0a2e1a', '#1a5c3a', '#2d9f6a'],
-            ['#2e2a0a', '#5c4a1a', '#9f8a2d'],
+            { bg: ['#0a0015', '#1a0a2e', '#2d1b69'], neon: '#7c3aed', glow: 'rgba(124,58,237,0.3)' },
+            { bg: ['#0f0010', '#2a0a2e', '#5c1b69'], neon: '#ec4899', glow: 'rgba(236,72,153,0.3)' },
+            { bg: ['#000d1a', '#0a1a3a', '#1b3a6f'], neon: '#06b6d4', glow: 'rgba(6,182,212,0.3)' },
         ];
         const p = palettes[idx % palettes.length];
-        const grad = c.createLinearGradient(0, 0, cvs.width, cvs.height);
-        grad.addColorStop(0, p[0]);
-        grad.addColorStop(0.5, p[1]);
-        grad.addColorStop(1, p[2]);
+
+        // 背景渐变
+        const grad = c.createRadialGradient(200, 100, 50, 340, 200, 500);
+        grad.addColorStop(0, p.bg[1]);
+        grad.addColorStop(0.5, p.bg[0]);
+        grad.addColorStop(1, '#000000');
         c.fillStyle = grad;
         c.fillRect(0, 0, cvs.width, cvs.height);
 
-        // 六边形网格装饰
-        c.strokeStyle = 'rgba(255,255,255,0.03)';
+        // 科技网格
+        c.strokeStyle = 'rgba(255,255,255,0.04)';
         c.lineWidth = 1;
-        for (let row = -1; row < 6; row++) {
-            for (let col = -1; col < 8; col++) {
-                const cx = col * 90 + (row % 2) * 45;
-                const cy = row * 78;
-                c.beginPath();
-                for (let i = 0; i < 6; i++) {
-                    const angle = (i * 60 - 30) * Math.PI / 180;
-                    const x = cx + 35 * Math.cos(angle);
-                    const y = cy + 35 * Math.sin(angle);
-                    i === 0 ? c.moveTo(x, y) : c.lineTo(x, y);
+        for (let i = 0; i <= cvs.width; i += 40) {
+            c.beginPath(); c.moveTo(i, 0); c.lineTo(i, cvs.height); c.stroke();
+        }
+        for (let i = 0; i <= cvs.height; i += 40) {
+            c.beginPath(); c.moveTo(0, i); c.lineTo(cvs.width, i); c.stroke();
+        }
+
+        // 网格交点发光点
+        for (let x = 0; x <= cvs.width; x += 40) {
+            for (let y = 0; y <= cvs.height; y += 40) {
+                if (Math.random() > 0.85) {
+                    c.beginPath();
+                    c.arc(x, y, 2, 0, Math.PI * 2);
+                    c.fillStyle = p.neon + '60';
+                    c.fill();
                 }
-                c.closePath();
-                c.stroke();
             }
         }
 
-        // 发光圆
-        const grd = c.createRadialGradient(120, 80, 10, 120, 80, 200);
-        grd.addColorStop(0, 'rgba(108,99,255,0.15)');
-        grd.addColorStop(1, 'rgba(108,99,255,0)');
-        c.fillStyle = grd;
-        c.fillRect(0, 0, 300, 300);
+        // 底部大光晕
+        const glow = c.createRadialGradient(340, 450, 10, 340, 400, 350);
+        glow.addColorStop(0, p.glow);
+        glow.addColorStop(0.5, p.neon.replace(')', '0.08)'));
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        c.fillStyle = glow;
+        c.fillRect(0, 0, cvs.width, cvs.height);
 
-        const grd2 = c.createRadialGradient(580, 320, 10, 580, 320, 200);
-        grd2.addColorStop(0, 'rgba(255,101,132,0.12)');
-        grd2.addColorStop(1, 'rgba(255,101,132,0)');
-        c.fillStyle = grd2;
-        c.fillRect(380, 120, 300, 300);
+        // 左上角装饰线
+        c.strokeStyle = p.neon;
+        c.lineWidth = 2;
+        c.beginPath();
+        c.moveTo(20, 60); c.lineTo(60, 20); c.lineTo(180, 20);
+        c.stroke();
+        c.beginPath();
+        c.moveTo(20, 70); c.lineTo(70, 20);
+        c.stroke();
 
-        // 分类标签
-        const labels = ['GAME', 'PROJECT', 'UNITY'];
-        const label = labels[idx % labels.length];
-        c.font = 'bold 11px monospace';
-        c.fillStyle = 'rgba(108,99,255,0.6)';
-        c.textAlign = 'left';
-        c.fillText(label, 30, 45);
+        // 右下角装饰
+        c.strokeStyle = p.neon + '40';
+        c.lineWidth = 1;
+        c.beginPath();
+        c.arc(cvs.width - 80, cvs.height - 80, 120, 0, Math.PI * 0.5);
+        c.stroke();
+        c.beginPath();
+        c.arc(cvs.width - 80, cvs.height - 80, 90, 0, Math.PI * 0.5);
+        c.stroke();
 
-        // 标题
-        c.font = 'bold 40px sans-serif';
-        c.fillStyle = '#ffffff';
-        c.textAlign = 'left';
-        c.shadowColor = 'rgba(0,0,0,0.5)';
+        // 大号标题 - 描边+填充
+        c.shadowColor = p.neon;
         c.shadowBlur = 20;
-        c.fillText(title, 30, 200);
+        c.font = 'bold 48px sans-serif';
+        c.textAlign = 'left';
+        c.textBaseline = 'middle';
+        c.fillStyle = '#ffffff';
+        c.fillText(title, 30, 170);
         c.shadowBlur = 0;
 
+        // 标题下划线
+        const tw = c.measureText(title).width;
+        const lineGrad = c.createLinearGradient(30, 200, 30 + tw, 200);
+        lineGrad.addColorStop(0, p.neon);
+        lineGrad.addColorStop(0.5, '#ffffff');
+        lineGrad.addColorStop(1, p.neon);
+        c.fillStyle = lineGrad;
+        c.fillRect(30, 198, tw, 3);
+
         // 副标题
-        c.font = '18px sans-serif';
-        c.fillStyle = 'rgba(255,255,255,0.5)';
-        c.fillText(subtitle, 30, 240);
+        c.font = '16px sans-serif';
+        c.fillStyle = 'rgba(255,255,255,0.4)';
+        c.textAlign = 'left';
+        c.fillText(subtitle.toUpperCase(), 30, 235);
 
-        // 底部装饰线
-        c.fillStyle = 'rgba(108,99,255,0.4)';
-        c.fillRect(30, 370, 80, 3);
-        c.fillStyle = 'rgba(255,101,132,0.3)';
-        c.fillRect(120, 370, 40, 3);
-
-        // 右下角小图标
-        const icons = ['⚔️', '🎲', '🎮'];
-        c.font = '32px sans-serif';
+        // 分类标签（右上方）
+        const badges = ['UNITY', 'GAME', 'PROJECT'];
+        c.font = 'bold 10px monospace';
         c.textAlign = 'right';
-        c.textBaseline = 'bottom';
-        c.globalAlpha = 0.15;
-        c.fillText(icons[idx % icons.length], cvs.width - 20, cvs.height - 20);
-        c.globalAlpha = 1;
+        c.fillStyle = p.neon + '80';
+        c.fillText('// ' + badges[idx % badges.length], cvs.width - 20, 35);
+
+        // 底部装饰条
+        const barGrad = c.createLinearGradient(0, cvs.height - 4, cvs.width, cvs.height - 4);
+        barGrad.addColorStop(0, 'transparent');
+        barGrad.addColorStop(0.3, p.neon + '60');
+        barGrad.addColorStop(0.7, p.neon + '60');
+        barGrad.addColorStop(1, 'transparent');
+        c.fillStyle = barGrad;
+        c.fillRect(0, cvs.height - 4, cvs.width, 2);
 
         return cvs.toDataURL();
     }
