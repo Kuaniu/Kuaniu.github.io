@@ -120,6 +120,22 @@
             background: rgba(108,99,255,0.15); color: var(--accent);
             padding: 3px 12px; border-radius: 50px; font-size: 0.82rem;
         }
+        .skill-tags span.highlight {
+            background: var(--accent); color: #fff;
+            padding: 3px 14px; border-radius: 50px; font-size: 0.82rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 12px rgba(108,99,255,0.3);
+        }
+        .skill-tags span.tag2 {
+            background: rgba(67,233,123,0.2); color: var(--accent3);
+            padding: 3px 14px; border-radius: 50px; font-size: 0.82rem;
+            border: 1px solid rgba(67,233,123,0.2);
+        }
+        .skill-tags span.tag3 {
+            background: rgba(255,217,61,0.15); color: var(--accent4);
+            padding: 3px 14px; border-radius: 50px; font-size: 0.82rem;
+            border: 1px solid rgba(255,217,61,0.15);
+        }
 
         /* ===== 项目卡片新封面 ===== */
         .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
@@ -313,6 +329,30 @@
             font-size: 1.8rem; cursor: pointer;
         }
 
+        /* 页面向导按钮（上下翻页） */
+        .page-nav {
+            position: fixed; right: 16px; bottom: 100px;
+            z-index: 99; display: flex; flex-direction: column; gap: 8px;
+            opacity: 0; transition: opacity .3s;
+            pointer-events: none;
+        }
+        .page-nav.visible { opacity: 1; pointer-events: auto; }
+        .page-nav button {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(108,99,255,0.2); border: 1px solid rgba(108,99,255,0.3);
+            color: #fff; font-size: 1.2rem; cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: all .2s; display: flex; align-items: center; justify-content: center;
+        }
+        .page-nav button:hover, .page-nav button:active {
+            background: rgba(108,99,255,0.5);
+            transform: scale(1.1);
+        }
+        .page-nav button:disabled {
+            opacity: 0.3; cursor: default;
+        }
+        .page-nav button:disabled:hover { transform: none; background: rgba(108,99,255,0.2); }
+
         /* 页脚 */
         footer {
             text-align: center; padding: 32px 20px;
@@ -338,6 +378,8 @@
             .tools-grid { grid-template-columns: repeat(2, 1fr); }
             .ai-grid { grid-template-columns: 1fr; }
             .sub-modal-box { max-width: 90%; }
+            .page-nav { right: 8px; bottom: 80px; }
+            .page-nav button { width: 38px; height: 38px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -353,7 +395,6 @@
         <li><a href="#about" onclick="closeNav()">关于</a></li>
         <li><a href="#projects" onclick="closeNav()">项目</a></li>
         <li><a href="#tools" onclick="closeNav()">小功能</a></li>
-        <li><a href="#resume" onclick="closeNav()">简历</a></li>
     </ul>
 </nav>
 
@@ -379,16 +420,19 @@
         <div class="about-grid">
             <div class="about-card">
                 <h3>🧑 个人介绍</h3>
-                <p>热爱游戏开发的 Unity 客户端开发者。广州软件学院数字媒体技术专业本科。</p>
+                <p>热爱游戏开发的 Unity 客户端开发者，具备完整的商业化项目研发经验。广州软件学院数字媒体技术专业本科，在校期间多次担任游戏开发团队负责人。</p>
                 <br>
-                <p>在校多次担任游戏开发团队队长，善于合理分配任务与解决团队问题。持续通过技术社区自我提升，保持对新技术的学习热情。</p>
+                <p>深度参与多款休闲竞技与 MMORPG 手游的客户端架构设计与开发，独立负责过背包、好友、公会、商店、排行榜等核心系统模块。熟悉资源热更新、网络通信、性能优化等游戏开发关键链路，具备良好的团队协作与抗压能力。</p>
+                <br>
+                <p>持续关注行业前沿技术，热衷于将创新方案落地到实际项目中。</p>
             </div>
             <div class="about-card">
                 <h3>🛠️ 专业技能</h3>
                 <div class="skill-tags">
-                    <span>Unity</span><span>C#</span><span>UGUI</span><span>DOTween</span>
-                    <span>AssetBundle</span><span>Lua/xLua</span><span>Photon Pun2</span>
-                    <span>Protobuf</span><span>TCP</span><span>Git</span><span>Unity DevOps</span>
+                    <span class="highlight">Unity</span><span class="highlight">C#</span><span class="highlight">AssetBundle</span><span class="highlight">Lua/xLua</span><span class="highlight">Photon Pun2</span>
+                    <span class="highlight">Protobuf</span><span class="highlight">TCP</span><span class="highlight">Roblox</span><span class="highlight">FGUI</span>
+                    <span class="tag2">UGUI</span><span class="tag2">DOTween</span><span class="tag2">Git</span><span class="tag2">SVN</span>
+                    <span class="tag3">Unity DevOps</span><span class="tag3">微信开发者工具</span><span class="tag3">Adobe PR</span>
                 </div>
             </div>
             <div class="about-card">
@@ -428,19 +472,6 @@
     </div>
 </section>
 
-<!-- 简历 -->
-<section id="resume">
-    <div class="container">
-        <h2 class="section-title">简历</h2>
-        <div class="resume-section">
-            <div class="resume-icon">📄</div>
-            <h3>我的简历</h3>
-            <p class="desc">包含详细的工作经历、项目经验、教育背景与技能清单</p>
-            <a href="assets/resume.docx" download="resume-unity-developer.docx" class="btn">📥 下载简历</a>
-        </div>
-    </div>
-</section>
-
 <!-- 视频弹窗 -->
 <div class="video-overlay" id="videoOverlay">
     <div class="video-box">
@@ -463,6 +494,12 @@
         <button class="close-btn" onclick="closeModal()">&times;</button>
         <div id="modalContent"></div>
     </div>
+</div>
+
+<!-- 上下翻页按钮 -->
+<div class="page-nav" id="pageNav">
+    <button id="prevBtn" title="上一页" onclick="scrollToPrev()">▲</button>
+    <button id="nextBtn" title="下一页" onclick="scrollToNext()">▼</button>
 </div>
 
 <footer>
@@ -974,16 +1011,26 @@
                 </div>
                 <div style="background:rgba(108,99,255,0.08);padding:12px;border-radius:10px;">
                     <div style="font-size:0.75rem;color:var(--text-dim);">Unix 时间戳</div>
-                    <div style="font-size:0.95rem;color:var(--accent2);" id="unixTs">${now}</div>
+                    <div style="font-size:0.95rem;color:var(--accent2);" id="unixTs">-</div>
                 </div>
             </div>
+            <div style="margin-top:12px;padding:10px;border-radius:10px;background:rgba(108,99,255,0.05);text-align:center;">
+                <span style="font-size:0.78rem;color:var(--text-dim);">⏱️ 实时时间 </span>
+                <span style="font-size:1rem;font-weight:700;color:var(--accent3);font-variant-numeric:tabular-nums;" id="liveClock">-</span>
+            </div>
         `;
-        // 设置当前日期时间
-        const d = new Date();
-        document.getElementById('dateInput').value = d.getFullYear() + '-' +
-            String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + 'T' +
-            String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-        tsToDate();
+        // 启动实时时钟
+        if (window.liveClockInterval) clearInterval(window.liveClockInterval);
+        window.liveClockInterval = setInterval(() => {
+            const nowMs = Date.now();
+            const el = document.getElementById('liveClock');
+            if (el) {
+                const d = new Date(nowMs);
+                el.textContent = d.toLocaleString('zh-CN', { hour12: false }) + '.' + String(d.getMilliseconds()).padStart(3,'0');
+            }
+        }, 50);
+        // 设置初始值
+        syncNow();
     }
     function syncNow() {
         const now = Math.floor(Date.now() / 1000);
@@ -1102,6 +1149,47 @@
         el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
         observer.observe(el);
     });
+
+    // ======== 上下翻页导航 ========
+    const sectionIds = ['home', 'about', 'projects', 'tools'];
+    const pageNav = document.getElementById('pageNav');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function getCurrentSectionIndex() {
+        const scrollY = window.scrollY + 80;
+        let idx = 0;
+        for (let i = 0; i < sectionIds.length; i++) {
+            const el = document.getElementById(sectionIds[i]);
+            if (el && el.offsetTop <= scrollY) idx = i;
+        }
+        return idx;
+    }
+
+    function updateNavButtons() {
+        const idx = getCurrentSectionIndex();
+        prevBtn.disabled = idx === 0;
+        nextBtn.disabled = idx >= sectionIds.length - 1;
+        pageNav.classList.add('visible');
+    }
+
+    function scrollToPrev() {
+        const idx = getCurrentSectionIndex();
+        if (idx > 0) {
+            document.getElementById(sectionIds[idx - 1]).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function scrollToNext() {
+        const idx = getCurrentSectionIndex();
+        if (idx < sectionIds.length - 1) {
+            document.getElementById(sectionIds[idx + 1]).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    window.addEventListener('scroll', updateNavButtons);
+    window.addEventListener('resize', updateNavButtons);
+    setTimeout(updateNavButtons, 500);
 </script>
 </body>
 </html>
